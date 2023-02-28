@@ -5,26 +5,45 @@ import "bootstrap/dist/js/bootstrap";
 
 import './App.css'
 
-const App = () => {
+function App() {
 
-  const [click, setClick] = useState(0)
-  const [emoji, setEmoji] = useState('🍪')
+  const [quote, setQuote] = useState('');
+  const [character, setCharacter] = useState('');
+  const [image, setImage] = useState('');
+  const [flipped, setFlipped] = useState(false);
 
-  const handleClick = () => {
-    setClick(click + 1);
 
-    if (click % 2 === 0 && click >= 2) {
-      setEmoji(emoji + '🍪')
-    }
+  const fetchData = async () => {
+    const res = await fetch("https://thesimpsonsquoteapi.glitch.me/quotes");
+    const data = await res.json();
+    setQuote(data[0].quote);
+    setCharacter(data[0].character);
+    setImage(data[0].image)
+
   };
 
+  const flippedCard = () => {
+    setFlipped(!flipped);
+  };
+
+  useEffect = (() => {
+    fetchData();
+  }, []);
+
+
   return (
-    <div>
-      <button onClick={handleClick}>Click Me</button>
-      <p>click:{click}</p>
-      <p>{emoji}</p>
-      {click >= 10 && <p>Victory</p>}
+    <div className={`card ${flipped ? 'flipped' : ''}`} onClick={flippedCard}>
+      <div>
+
+        <h2>"{quote}"</h2>
+        <button onClick={fetchData}>New Quote</button>
+      </div>
+      <div>
+        <img src={image} alt={character}></img>
+        <h4>{character}</h4>
+      </div>
     </div>
+
   )
 }
 export default App;
